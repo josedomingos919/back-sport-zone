@@ -6,7 +6,7 @@ export const enum UserAccessType {
   VISITANTE,
 }
 
-export const UserTypeData = [
+export const UserAccessTypeData = [
   { key: 'ADMINISTRADOR_DO_SISTEMA', value: 'Administrador do sistema' },
   { key: 'DIRIGENTE_DO_CLUBE', value: 'Dirigente do clube' },
   { key: 'TREINADOR', value: 'Treinador' },

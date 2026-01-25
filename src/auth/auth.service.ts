@@ -1,19 +1,18 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { SignupDto } from './dto';
-
-import * as argon from 'argon2';
-
 import { SigninDto } from './dto/signinDto';
 import { JwtService } from '@nestjs/jwt/dist';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@prisma/client';
+import { UserAccessType } from 'src/helpers/consts';
+import { PrismaService } from '../prisma/prisma.service';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+
+import * as argon from 'argon2';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
     private jwt: JwtService,
+    private prisma: PrismaService,
     private config: ConfigService,
   ) {}
 
@@ -25,9 +24,7 @@ export class AuthService {
         data: {
           password,
           email: dto.email,
-          access: dto.access,
-          employeeId: dto.employeeId,
-          statusId: dto.statusId,
+          access: UserAccessType.ADMINISTRADOR_DO_SISTEMA.toString(),
         },
       });
 
@@ -45,9 +42,6 @@ export class AuthService {
   async signin(dto: SigninDto) {
     try {
       const user = await this.prisma.user.findUnique({
-        include: {
-          employee: true,
-        },
         where: {
           email: dto.email,
         },
@@ -69,14 +63,11 @@ export class AuthService {
 
       delete user.password;
 
-      const permissions = await this.getUserPermissions(user);
-
       const token = await this.getSignToken(user.id, user.email);
 
       return {
         user,
         token,
-        permissions,
       };
     } catch (error) {
       throw new ForbiddenException({
@@ -97,19 +88,5 @@ export class AuthService {
       expiresIn: '15m',
       secret: this.config.get('JWT_SECRET'),
     });
-  }
-
-  async getUserPermissions(user: User) {
-    const permissions = await this.prisma.permission.findMany({
-      where: {
-        UserGroupPermission: {
-          some: {
-            group: user.access,
-          },
-        },
-      },
-    });
-
-    return permissions;
   }
 }
