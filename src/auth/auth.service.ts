@@ -24,7 +24,7 @@ export class AuthService {
       const user = await this.prisma.user.create({
         data: {
           password,
-          phone: dto.phone,
+          email: dto.email,
           access: dto.access,
           employeeId: dto.employeeId,
           statusId: dto.statusId,
@@ -49,7 +49,7 @@ export class AuthService {
           employee: true,
         },
         where: {
-          phone: dto.phone,
+          email: dto.email,
         },
       });
 
@@ -71,7 +71,7 @@ export class AuthService {
 
       const permissions = await this.getUserPermissions(user);
 
-      const token = await this.getSignToken(user.id, user.phone);
+      const token = await this.getSignToken(user.id, user.email);
 
       return {
         user,
@@ -87,10 +87,10 @@ export class AuthService {
     }
   }
 
-  getSignToken(userId: number, phone: string): Promise<string> {
+  getSignToken(userId: number, email: string): Promise<string> {
     const payload = {
       sub: userId,
-      phone,
+      email,
     };
 
     return this.jwt.signAsync(payload, {

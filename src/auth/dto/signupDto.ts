@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
 export class SignupDto {
   @IsString()
   @IsNotEmpty()
-  phone: string;
+  email: string;
 
   @IsString()
   @IsNotEmpty()
@@ -12,12 +12,4 @@ export class SignupDto {
   @IsString()
   @IsNotEmpty()
   access: string;
-
-  @IsNumber()
-  @IsNotEmpty()
-  employeeId: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  statusId: number;
 }
