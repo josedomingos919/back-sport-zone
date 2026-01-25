@@ -1,5 +1,5 @@
 import { GetAllUserDTO } from './dto';
-import { getPagination, statusTypes } from '../helpers';
+import { getPagination } from 'src/helpers/functions';
 import { PrismaService } from '../prisma/prisma.service';
 import { Injectable, ForbiddenException } from '@nestjs/common';
 
@@ -21,17 +21,7 @@ export class UserService {
       skip,
       take,
       where,
-      include: {
-        employee: true,
-        status: true,
-      },
-      orderBy: [
-        {
-          employee: {
-            name: 'asc',
-          },
-        },
-      ],
+      orderBy: [{}],
     });
 
     return {
@@ -44,11 +34,7 @@ export class UserService {
 
   private getAllFilter(filter: GetAllUserDTO) {
     const where = {
-      NOT: {
-        status: {
-          code: statusTypes.DELETED,
-        },
-      },
+      NOT: {},
     };
 
     const { name } = filter;
@@ -67,14 +53,7 @@ export class UserService {
   async search(keword: string) {
     try {
       const users = await this.prisma.user.findMany({
-        where: {
-          employee: {
-            name: {
-              mode: 'insensitive',
-              contains: keword,
-            },
-          },
-        },
+        where: {},
       });
 
       return users;
