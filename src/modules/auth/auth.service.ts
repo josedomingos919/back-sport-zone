@@ -3,7 +3,7 @@ import { SigninDto } from './dto/signinDto';
 import { JwtService } from '@nestjs/jwt/dist';
 import { ConfigService } from '@nestjs/config';
 import { UserAccessType } from 'src/helpers/consts';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import * as argon from 'argon2';

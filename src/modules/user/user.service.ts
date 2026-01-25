@@ -1,6 +1,6 @@
 import { GetAllUserDTO } from './dto';
 import { getPagination } from 'src/helpers/functions';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { Injectable, ForbiddenException } from '@nestjs/common';
 
 @Injectable()
