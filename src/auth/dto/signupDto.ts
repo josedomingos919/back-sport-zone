@@ -8,8 +8,4 @@ export class SignupDto {
   @IsString()
   @IsNotEmpty()
   password: string;
-
-  @IsString()
-  @IsNotEmpty()
-  access: string;
 }
