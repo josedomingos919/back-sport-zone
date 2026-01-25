@@ -1,0 +1,839 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  phone      String   @unique
+  password   String
+  access     String
+  employeeId Int
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  statusId   Int?
+  status     Status?  @relation(fields: [statusId], references: [id])
+
+  @@map("users")
+}
+
+model Country {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name     String
+  code     String     @unique
+  province Province[]
+  employee Employee[]
+  student  Student[]
+
+  @@map("country")
+}
+
+model Province {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name      String
+  countryId Int
+  country   Country    @relation(fields: [countryId], references: [id])
+  employee  Employee[]
+  student   Student[]
+
+  @@map("province")
+}
+
+model Office {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name     String
+  code     String     @unique
+  employee Employee[]
+
+  @@map("office")
+}
+
+model StudentSupervisor {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name   String
+  bi     String  @unique
+  degree String? //Grau de Parentesco
+  phone1 String?
+  phone2 String?
+
+  DiscountsInUse DiscountsInUse[]
+  Student        Student[]
+
+  status   Status @relation(fields: [statusId], references: [id])
+  statusId Int
+
+  @@map("studentsupervisor")
+}
+
+// Tabela para asociação de desconto para tudo encarregado, aluno, etc
+model DiscountsInUse {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studenty  Student? @relation(fields: [studentId], references: [id])
+  studentId Int?
+
+  studentSupervisor   StudentSupervisor? @relation(fields: [studentSupervisorId], references: [id])
+  studentSupervisorId Int?
+
+  paymentDiscountId Int
+  discount          PaymentDiscount @relation(fields: [paymentDiscountId], references: [id])
+
+  statusId Int
+  status   Status @relation(fields: [statusId], references: [id])
+}
+
+model PaymentDiscount {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  value          Float?
+  percentage     Int?
+  discountType   String // Percentage, Value
+  paymentType    String
+  DiscountsInUse DiscountsInUse[]
+
+  statusId                Int
+  status                  Status                    @relation(fields: [statusId], references: [id])
+  InvoicePaymentDiscounts InvoicePaymentDiscounts[]
+}
+
+model Student {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name         String
+  bi           String?
+  birthDay     DateTime?
+  civilState   String?
+  gender       String?
+  address      String?
+  email        String?
+  phone1       String
+  phone2       String?
+  countryId    Int
+  country      Country        @relation(fields: [countryId], references: [id])
+  statusId     Int
+  status       Status         @relation(fields: [statusId], references: [id])
+  provinceId   Int
+  province     Province       @relation(fields: [provinceId], references: [id])
+  registration Registration[]
+
+  //Encarregado
+  studentSupervisor   StudentSupervisor? @relation(fields: [studentSupervisorId], references: [id])
+  studentSupervisorId Int?
+
+  parentAffiliation   String?
+  maternalAffiliation String?
+  residence           String?
+  municipality        String?
+  natural             String?
+  emitOn              String?
+  validUntil          String?
+  isWorking           String?
+  work                String?
+  workStation         String?
+  sponsorOfEducation  String?
+
+  balance         Float             @default(0)
+  DocumentRequest DocumentRequest[]
+  DiscountsInUse  DiscountsInUse[]
+
+  @@map("student")
+}
+
+model Employee {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name         String
+  bi           String         @unique
+  birthDay     DateTime?
+  civilState   String?
+  gender       String?
+  address      String?
+  salaryType   String
+  salary       Float
+  email        String?
+  users        User[]
+  phone1       String
+  phone2       String?
+  countryId    Int
+  country      Country        @relation(fields: [countryId], references: [id])
+  statusId     Int
+  status       Status         @relation(fields: [statusId], references: [id])
+  officeId     Int
+  office       Office         @relation(fields: [officeId], references: [id])
+  provinceId   Int
+  province     Province       @relation(fields: [provinceId], references: [id])
+  teacher      Teacher[]
+  Registration Registration[]
+  payment      Payment[]
+  Invoice      Invoice[]
+
+  @@map("employees")
+}
+
+model Classroom {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name          String      @unique
+  description   String?
+  ClassTeam     ClassTeam[]
+  studentNumber Int?
+
+  @@map("classroom")
+}
+
+model Status {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name              String
+  code              String              @unique
+  description       String?
+  user              User[]
+  show              Boolean             @default(true)
+  employee          Employee[]
+  teacher           Teacher[]
+  student           Student[]
+  ClassTeam         ClassTeam[]
+  Registration      Registration[]
+  payment           Payment[]
+  Invoice           Invoice[]
+  SchoolYear        SchoolYear[]
+  DocumentRequest   DocumentRequest[]
+  DocumentType      DocumentType[]
+  DocumentCategory  DocumentCategory[]
+  DiscountsInUse    DiscountsInUse[]
+  PaymentDiscount   PaymentDiscount[]
+  StudentSupervisor StudentSupervisor[]
+
+  @@map("status")
+}
+
+model Class {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name              String              @unique
+  registrationPrice RegistrationPrice[]
+  classTeam         ClassTeam[]
+  registration      Registration[]
+  CurriculumGrid    CurriculumGrid[]
+
+  @@map("class")
+}
+
+model Discipline {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name               String               @unique
+  description        String?
+  teacherDisciplines TeacherDisciplines[]
+  classTeamTeacher   ClassTeamTeacher[]
+  CurriculumGrid     CurriculumGrid[]
+  Exam               Exam[]
+  SchoolResource     SchoolResource[]
+  Schedule           Schedule[]
+
+  @@map("discipline")
+}
+
+model Course {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String  @unique
+  description String?
+
+  registrationPrice RegistrationPrice[]
+  classTeam         ClassTeam[]
+  registration      Registration[]
+  CurriculumGrid    CurriculumGrid[]
+
+  @@map("course")
+}
+
+model SchoolYear {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  year         String         @unique
+  description  String
+  classTeam    ClassTeam[]
+  registration Registration[]
+  Months       Months[]
+
+  statusId          Int?
+  status            Status?             @relation(fields: [statusId], references: [id])
+  RegistrationPrice RegistrationPrice[]
+
+  @@map("schoolyear")
+}
+
+model Teacher {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  employeeId         Int                  @unique
+  employee           Employee             @relation(fields: [employeeId], references: [id])
+  teacherDisciplines TeacherDisciplines[]
+  academicLevel      String
+
+  statusId         Int?
+  status           Status?            @relation(fields: [statusId], references: [id])
+  ClassTeamTeacher ClassTeamTeacher[]
+
+  @@map("teachers")
+}
+
+model TeacherDisciplines {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacherId    Int
+  teacher      Teacher    @relation(fields: [teacherId], references: [id])
+  disciplineId Int
+  discipline   Discipline @relation(fields: [disciplineId], references: [id])
+
+  @@map("teacherdisciplines")
+}
+
+model RegistrationPrice {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  registrationPrice   Float?
+  reregistrationPrice Float?
+  monthPrice          Float?
+  examePrice          Float?
+  registrationMulta   Float?
+
+  schoolYearId Int?
+  schoolYear   SchoolYear? @relation(fields: [schoolYearId], references: [id])
+
+  courseId Int?
+  course   Course? @relation(fields: [courseId], references: [id])
+
+  classId Int
+  class   Class @relation(fields: [classId], references: [id])
+
+  @@unique([classId, courseId, schoolYearId])
+  @@map("registrationprice")
+}
+
+model ClassTeam {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+
+  period String
+
+  schoolYearId Int
+  schoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id])
+
+  courseId Int?
+  course   Course? @relation(fields: [courseId], references: [id])
+
+  classId Int
+  class   Class @relation(fields: [classId], references: [id])
+
+  classroomId      Int
+  classroom        Classroom          @relation(fields: [classroomId], references: [id])
+  classTeamTeacher ClassTeamTeacher[]
+
+  statusId     Int?
+  status       Status?        @relation(fields: [statusId], references: [id])
+  Registration Registration[]
+
+  classTeamScheduleId Int?
+  Schedule            Schedule[]
+
+  @@map("classteam")
+}
+
+model ClassTeamTeacher {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacherId Int
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  disciplineId Int
+  discipline   Discipline @relation(fields: [disciplineId], references: [id])
+
+  classTeamId Int
+  classTeam   ClassTeam @relation(fields: [classTeamId], references: [id])
+
+  @@unique([teacherId, disciplineId, classTeamId])
+  @@map("classteamteacher")
+}
+
+model Schedule {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  classTeam  ClassTeam  @relation(fields: [classTeamId], references: [id])
+  discipline Discipline @relation(fields: [disciplineId], references: [id])
+  weekDay    weekDays   @relation(fields: [weekDaysId], references: [id])
+
+  startTime    DateTime
+  endTime      DateTime
+  disciplineId Int
+  classTeamId  Int
+  weekDaysId   Int
+
+  @@unique([startTime, endTime, classTeamId, weekDaysId])
+  @@map("schedule")
+}
+
+model weekDays {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name     String
+  short    String
+  number   Int
+  Schedule Schedule[]
+
+  @@map("weekdays")
+}
+
+model Registration {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type      String
+  price     Float
+  cardPrice Float
+
+  classTeamId Int
+  classTeam   ClassTeam @relation(fields: [classTeamId], references: [id])
+
+  courseId Int?
+  course   Course? @relation(fields: [courseId], references: [id])
+
+  classId Int
+  class   Class @relation(fields: [classId], references: [id])
+
+  SchoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id])
+  schoolYearId Int
+
+  statusId Int
+  status   Status @relation(fields: [statusId], references: [id])
+
+  employeeId Int?
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+
+  student         Student           @relation(fields: [studentId], references: [id])
+  studentId       Int
+  productSale     ProductSale[]
+  payment         Payment[]
+  Invoice         Invoice[]
+  DocumentRequest DocumentRequest[]
+  MedicalRecord   MedicalRecord[]
+
+  previousClass       String?
+  previousGroup       String?
+  previousRoom        String?
+  previousNumber      Int?
+  previousSchoolsName String?
+
+  @@map("registration")
+}
+
+model MedicalRecord {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  allergiesSpecific Boolean @default(false) // Alergias
+  allergiesDetails  String? // Detalhes da alergias específicas do aluno
+  cognitiveDisorder Boolean @default(false) // Doença cognitiva
+  asthma            Boolean @default(false) // Asma
+  epilepsy          Boolean @default(false) // Epilepsia
+  convulsion        Boolean @default(false) // Convulsão
+  visualImpairment  Boolean @default(false) // Deficiência visual
+  specialNeeds      Boolean @default(false) // Necessidades especiais
+  hemophilia        Boolean @default(false) // Hemofilia
+  hearingImpairment Boolean @default(false) // Deficiência auditiva
+  medicalTreatment  Boolean @default(false) // Em tratamento médico
+  treatmentDetails  String? // Detalhes do tratamento médico
+  hospitalName      String? // Nome do hospital ou clínica
+  hospitalAddress   String? // Endereço do hospital ou clínica
+
+  registration   Registration @relation(fields: [registrationId], references: [id])
+  registrationId Int
+
+  @@map("medicalRecord")
+}
+
+model Product {
+  id          Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  name        String
+  price       Float?
+  code        String        @unique
+  quantity    Int           @default(0)
+  useQuantity String        @default("Sim")
+  ProductSale ProductSale[]
+
+  @@map("product")
+}
+
+model ProductSale {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  registrationId Int?
+  registration   Registration? @relation(fields: [registrationId], references: [id])
+  product        Product?      @relation(fields: [productId], references: [id])
+  productId      Int?
+  quantity       Int           @default(1)
+  price          Int?
+
+  @@map("productSale")
+}
+
+model CurriculumGrid {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  class   Class @relation(fields: [classId], references: [id])
+  classId Int
+
+  course   Course? @relation(fields: [courseId], references: [id])
+  courseId Int?
+
+  discipline   Discipline @relation(fields: [disciplineId], references: [id])
+  disciplineId Int
+
+  @@map("curriculumGrid")
+}
+
+model Months {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String
+  number      Int
+  initialDate DateTime
+  limitDate   DateTime
+
+  schoolYear   SchoolYear @relation(fields: [schoolYearId], references: [id])
+  schoolYearId Int
+
+  SchoolFees SchoolFees[]
+
+  @@map("months")
+}
+
+model BankAccount {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  number         String           @unique
+  iban           String           @unique
+  titular        String
+  banco          String?
+  PaymentMethods PaymentMethods[]
+}
+
+model PaymentMethod {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name   String
+  repeat Int    @default(0)
+  show   Int    @default(1)
+
+  paymentMethods PaymentMethods[]
+}
+
+model PaymentMethods {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+  invoice       Invoice       @relation(fields: [invoiceId], references: [id])
+  bankAccount   BankAccount?  @relation(fields: [bankAccountId], references: [id])
+
+  paymentMethodId   Int
+  value             Float
+  date              DateTime?
+  ibanRemitent      String?
+  transactionNumber String?
+  bankAccountId     Int?
+  invoiceId         Int
+}
+
+model Payment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type           String
+  value          Float
+  multa          Float
+  total          Float
+  employee       Employee         @relation(fields: [employeeId], references: [id])
+  status         Status           @relation(fields: [statusId], references: [id])
+  registration   Registration     @relation(fields: [registrationId], references: [id])
+  employeeId     Int
+  statusId       Int
+  registrationId Int
+  SchoolFees     SchoolFees[]
+  Exam           Exam[]
+  SchoolResource SchoolResource[]
+  reference      String?
+
+  invoice                 Invoice                   @relation(fields: [invoiceId], references: [id])
+  invoiceId               Int
+  InvoicePaymentDiscounts InvoicePaymentDiscounts[]
+  DocumentRequestPayments DocumentRequestPayments[]
+
+  @@map("payment")
+}
+
+model InvoicePaymentDiscounts {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payment   Payment @relation(fields: [paymentId], references: [id])
+  paymentId Int
+
+  paymentDiscount   PaymentDiscount @relation(fields: [paymentDiscountId], references: [id])
+  paymentDiscountId Int
+
+  discountName String
+  discountType String
+  percentage   Float?
+  value        Float?
+  total        Float?
+
+  @@map("invoiceDiscounts")
+}
+
+model SchoolFees {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payment   Payment @relation(fields: [paymentId], references: [id])
+  paymentId Int
+
+  month    Months @relation(fields: [monthsId], references: [id])
+  monthsId Int
+
+  schoolFine String
+
+  @@map("schoolFees")
+}
+
+model Exam {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payment   Payment @relation(fields: [paymentId], references: [id])
+  paymentId Int
+
+  discipline   Discipline @relation(fields: [disciplineId], references: [id])
+  disciplineId Int
+
+  @@map("exam")
+}
+
+model SchoolResource {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payment   Payment @relation(fields: [paymentId], references: [id])
+  paymentId Int
+
+  discipline   Discipline @relation(fields: [disciplineId], references: [id])
+  disciplineId Int
+
+  @@map("schoolResource")
+}
+
+model Setting {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  key       String @unique()
+  descricao String
+  value     String // @db.LongText is for mysql
+
+  @@map("setting")
+}
+
+model Invoice {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  number         String?
+  registration   Registration @relation(fields: [registrationId], references: [id])
+  registrationId Int
+  subTotal       Float
+  descontoSaldo  Float
+  total          Float
+  valorDado      Float
+  troco          Float
+
+  status   Status @relation(fields: [statusId], references: [id])
+  statusId Int
+
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int
+
+  Payment        Payment[]
+  PaymentMethods PaymentMethods[]
+
+  @@map("invoice")
+}
+
+model Permission {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  key                 String                @unique()
+  descricao           String
+  area                String?
+  UserGroupPermission UserGroupPermission[]
+
+  @@map("permission")
+}
+
+model UserGroupPermission {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  permissionId Int
+
+  group String // Admin, Professor
+
+  @@map("userGroupPermission")
+}
+
+model DocumentCategory {
+  id           Int            @id @default(autoincrement())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  DocumentType DocumentType[]
+
+  name String @unique
+
+  status   Status @relation(fields: [statusId], references: [id])
+  statusId Int
+
+  @@map("documentCategory")
+}
+
+model DocumentType {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  document           DocumentCategory @relation(fields: [documentCategoryId], references: [id])
+  documentCategoryId Int
+
+  name            String            @unique
+  price           Float?
+  DocumentRequest DocumentRequest[]
+
+  status   Status @relation(fields: [statusId], references: [id])
+  statusId Int
+
+  @@map("documentType")
+}
+
+model DocumentRequest {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  student      Student      @relation(fields: [studentId], references: [id])
+  registration Registration @relation(fields: [registrationId], references: [id])
+  documentType DocumentType @relation(fields: [documentTypeId], references: [id])
+
+  registrationId Int
+  studentId      Int
+  documentTypeId Int
+
+  price Float?
+
+  status   Status @relation(fields: [statusId], references: [id])
+  statusId Int
+
+  DocumentRequestPayments DocumentRequestPayments[]
+
+  @@map("documentRequest")
+}
+
+model DocumentRequestPayments {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documentRequest   DocumentRequest @relation(fields: [documentRequestId], references: [id])
+  payment           Payment         @relation(fields: [paymentId], references: [id])
+  documentRequestId Int
+  paymentId         Int
+}
