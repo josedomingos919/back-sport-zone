@@ -24,7 +24,7 @@ export class AuthService {
         data: {
           password,
           email: dto.email,
-          access: UserAccessType.ADMINISTRADOR_DO_SISTEMA.toString(),
+          access: UserAccessType.ADMINISTRADOR_DO_SISTEMA,
         },
       });
 

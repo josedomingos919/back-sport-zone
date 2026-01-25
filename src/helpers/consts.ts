@@ -1,10 +1,10 @@
-export const enum UserAccessType {
-  ADMINISTRADOR_DO_SISTEMA,
-  DIRIGENTE_DO_CLUBE,
-  TREINADOR,
-  ATLETA,
-  VISITANTE,
-}
+export const UserAccessType = {
+  ADMINISTRADOR_DO_SISTEMA: 'ADMINISTRADOR_DO_SISTEMA',
+  DIRIGENTE_DO_CLUBE: 'DIRIGENTE_DO_CLUBE',
+  TREINADOR: 'TREINADOR',
+  ATLETA: 'ATLETA',
+  VISITANTE: 'VISITANTE',
+};
 
 export const UserAccessTypeData = [
   { key: 'ADMINISTRADOR_DO_SISTEMA', value: 'Administrador do sistema' },
