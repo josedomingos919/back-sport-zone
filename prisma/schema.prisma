@@ -49,13 +49,13 @@ model Clube {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name       String
-  ano        Int
-  telefone   String
-  email      String
-  modalidade String
-  dirigente  User   @relation(fields: [userId], references: [id])
-  userId     Int
+  name        String
+  ano         Int
+  telefone    String
+  email       String
+  modalidade  String
+  dirigente   User   @relation(fields: [dirigenteId], references: [id])
+  dirigenteId Int
 
   province    Provincia @relation(fields: [provinciaId], references: [id])
   provinciaId Int

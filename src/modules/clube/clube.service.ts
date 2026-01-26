@@ -1,26 +1,86 @@
 import { Injectable } from '@nestjs/common';
 import { CreateClubeDto } from './dto/createClube.dto';
 import { UpdateClubeDto } from './dto/updateClube.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { GetAllClubsDto } from './dto/getAllClubs.dto';
+import { getPagination } from 'src/helpers/functions';
 
 @Injectable()
 export class ClubeService {
-  create(createClubeDto: CreateClubeDto) {
-    return 'This action adds a new clube';
+  constructor(private prisma: PrismaService) {}
+
+  async create(dto: CreateClubeDto) {
+    const response = await this.prisma.clube.create({
+      data: dto,
+    });
+
+    return response;
   }
 
-  findAll() {
-    return `This action returns all clube`;
+  async findAll(filter: GetAllClubsDto) {
+    const { page = 1, size = 10 } = filter;
+    const { where } = this.getAllFilter(filter);
+
+    const total = await this.prisma.clube.count({
+      where,
+    });
+
+    const { skip, take, totalPage } = getPagination({ page, size, total });
+
+    const movimentos = await this.prisma.clube.findMany({
+      include: { dirigente: true, province: true },
+      skip,
+      take,
+      where,
+      orderBy: [
+        {
+          id: 'desc',
+        },
+      ],
+    });
+
+    return {
+      page,
+      movimentos,
+      total,
+      totalPage,
+    };
+  }
+
+  private getAllFilter(filter: GetAllClubsDto) {
+    const where = {
+      NOT: {},
+    };
+
+    const { name } = filter;
+
+    if (name) where['name'] = name;
+
+    return { where };
   }
 
   findOne(id: number) {
     return `This action returns a #${id} clube`;
   }
 
-  update(id: number, updateClubeDto: UpdateClubeDto) {
-    return `This action updates a #${id} clube`;
+  async update(id: number, dto: UpdateClubeDto) {
+    const response = await this.prisma.clube.update({
+      data: dto,
+      where: {
+        id,
+      },
+    });
+
+    return response;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} clube`;
+  async remove(id: number) {
+    const response = await this.prisma.clube.delete({
+      where: {
+        id,
+      },
+    });
+
+    return response;
   }
 }
