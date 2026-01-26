@@ -34,7 +34,7 @@ export class ClubeController {
     return this.clubeService.findOne(+id);
   }
 
-  @Put(':id')
+  @Put('update/:id')
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateClubeDto: UpdateClubeDto,
