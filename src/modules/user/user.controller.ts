@@ -6,7 +6,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get()
+  @Get('all')
   getAll(@Query() queryParams: GetAllUserDTO) {
     return this.userService.getAll(queryParams);
   }
