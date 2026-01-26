@@ -21,6 +21,7 @@ export class CreateMovimentoDto {
   @IsString()
   @IsNotEmpty()
   @IsDateString()
+  @Transform(({ value }) => new Date(value).toISOString())
   data: Date;
 
   @IsEnum(TipoMovimento, {
