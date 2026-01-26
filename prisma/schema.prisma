@@ -90,9 +90,10 @@ model Movimentos {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  valor   Decimal
-  obs     String
-  entrada Boolean
+  valor     Decimal
+  descricao String
+  tipo      String // Entrada ou Saída
+  data      DateTime
 }
 
 model Treino {
