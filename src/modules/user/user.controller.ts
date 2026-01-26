@@ -1,6 +1,7 @@
 import { GetAllUserDTO } from './dto';
+import { CreateUserDto } from './dto/createUserDto';
 import { UserService } from './user.service';
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 
 @Controller('users')
 export class UserController {
@@ -14,5 +15,10 @@ export class UserController {
   @Get('search/:keword')
   search(@Param('keword') keword: string) {
     return this.userService.search(keword);
+  }
+
+  @Post('create')
+  create(@Body() dto: CreateUserDto) {
+    return this.userService.create(dto);
   }
 }

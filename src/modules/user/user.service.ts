@@ -2,6 +2,9 @@ import { GetAllUserDTO } from './dto';
 import { getPagination } from 'src/helpers/functions';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Injectable, ForbiddenException } from '@nestjs/common';
+import { CreateUserDto } from './dto/createUserDto';
+
+import * as argon from 'argon2';
 
 @Injectable()
 export class UserService {
@@ -21,7 +24,11 @@ export class UserService {
       skip,
       take,
       where,
-      orderBy: [{}],
+      orderBy: [
+        {
+          id: 'desc',
+        },
+      ],
     });
 
     return {
@@ -57,6 +64,25 @@ export class UserService {
       });
 
       return users;
+    } catch (error) {
+      throw new ForbiddenException({
+        error,
+        status: false,
+      });
+    }
+  }
+
+  async create(dto: CreateUserDto) {
+    try {
+      const password = await argon.hash(dto.password);
+
+      dto.password = password;
+
+      const user = await this.prisma.user.create({
+        data: dto,
+      });
+
+      return user;
     } catch (error) {
       throw new ForbiddenException({
         error,
