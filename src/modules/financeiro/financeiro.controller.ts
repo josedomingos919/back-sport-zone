@@ -8,6 +8,7 @@ import {
   Controller,
   ParseIntPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { FinanceiroService } from './financeiro.service';
 import { CreateMovimentoDto } from './dto/CreateMovimentoDto';
@@ -20,8 +21,8 @@ export class FinanceiroController {
   constructor(private financeiroService: FinanceiroService) {}
 
   @Get('all')
-  getAllMovimento(@Param() params: GetAllMovimentosDto) {
-    return this.financeiroService.getAllMovimento(params);
+  getAllMovimento(@Query() queryParams: GetAllMovimentosDto) {
+    return this.financeiroService.getAllMovimento(queryParams);
   }
 
   @Post('create')
