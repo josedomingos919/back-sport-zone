@@ -5,6 +5,7 @@ import { Injectable, ForbiddenException } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUserDto';
 
 import * as argon from 'argon2';
+import { UserAccessType } from 'src/helpers/consts';
 
 @Injectable()
 export class UserService {
@@ -55,6 +56,28 @@ export class UserService {
       };
 
     return { where };
+  }
+
+  async getAllDirigentes() {
+    try {
+      const users = await this.prisma.user.findMany({
+        where: {
+          access: UserAccessType.DIRIGENTE_DO_CLUBE,
+        },
+        orderBy: [
+          {
+            id: 'desc',
+          },
+        ],
+      });
+
+      return users;
+    } catch (error) {
+      throw new ForbiddenException({
+        error,
+        status: false,
+      });
+    }
   }
 
   async search(keword: string) {

@@ -12,6 +12,11 @@ export class UserController {
     return this.userService.getAll(queryParams);
   }
 
+  @Get('dirigentes')
+  getAllDirigentes() {
+    return this.userService.getAllDirigentes();
+  }
+
   @Get('search/:keword')
   search(@Param('keword') keword: string) {
     return this.userService.search(keword);

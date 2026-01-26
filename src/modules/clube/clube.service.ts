@@ -27,7 +27,7 @@ export class ClubeService {
 
     const { skip, take, totalPage } = getPagination({ page, size, total });
 
-    const movimentos = await this.prisma.clube.findMany({
+    const clubes = await this.prisma.clube.findMany({
       include: { dirigente: true, province: true },
       skip,
       take,
@@ -41,8 +41,8 @@ export class ClubeService {
 
     return {
       page,
-      movimentos,
       total,
+      clubes,
       totalPage,
     };
   }
