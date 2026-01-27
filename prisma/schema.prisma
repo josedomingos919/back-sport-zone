@@ -31,7 +31,6 @@ model Atleta {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  nome       String
   nascimento DateTime
   posicao    String
   publico    Boolean  @default(false)
