@@ -26,7 +26,7 @@ export class AtletaService {
 
     const { skip, take, totalPage } = getPagination({ page, size, total });
 
-    const clubes = await this.prisma.atleta.findMany({
+    const atletas = await this.prisma.atleta.findMany({
       include: { equipe: true, user: true },
       skip,
       take,
@@ -41,7 +41,7 @@ export class AtletaService {
     return {
       page,
       total,
-      clubes,
+      atletas,
       totalPage,
     };
   }
