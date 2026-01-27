@@ -26,14 +26,14 @@ export class EquipaService {
     const { page = 1, size = 10 } = filter;
     const { where } = this.getAllFilter(filter);
 
-    const total = await this.prisma.clube.count({
+    const total = await this.prisma.equipa.count({
       where,
     });
 
     const { skip, take, totalPage } = getPagination({ page, size, total });
 
-    const equipas = await this.prisma.clube.findMany({
-      include: { dirigente: true, province: true },
+    const equipas = await this.prisma.equipa.findMany({
+      include: { clube: true, treinador: true },
       skip,
       take,
       where,
