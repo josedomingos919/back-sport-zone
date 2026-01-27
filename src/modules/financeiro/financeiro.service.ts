@@ -4,9 +4,45 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateMovimentoDto } from './dto/CreateMovimentoDto';
 import { GetAllMovimentosDto } from './dto/GetAllMovimentosDto';
 
+import * as XLSX from 'xlsx';
+
 @Injectable()
 export class FinanceiroService {
   constructor(private prisma: PrismaService) {}
+
+  async exportToExcel(dataInicio: Date, dataFim: Date): Promise<Buffer> {
+    const movimentos = await this.prisma.movimentos.findMany({
+      where: {
+        data: {
+          gte: dataInicio,
+          lte: dataFim,
+        },
+      },
+      orderBy: {
+        data: 'asc',
+      },
+    });
+
+    const sheetData = movimentos.map((m) => ({
+      ID: m.id,
+      Data: m.data.toISOString().split('T')[0],
+      Tipo: m.tipo,
+      Descrição: m.descricao,
+      Valor: Number(m.valor),
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(sheetData);
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Movimentos');
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'buffer',
+    });
+
+    return excelBuffer;
+  }
 
   async getAllMovimento(filter: GetAllMovimentosDto) {
     const { page = 1, size = 10 } = filter;
