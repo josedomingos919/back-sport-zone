@@ -80,10 +80,9 @@ model Equipa {
   clube   Clube @relation(fields: [clubeId], references: [id])
   clubeId Int
 
-  Treino          Treino[]
-  Jogo            Jogo[]
-  HistoricoAtleta HistoricoAtleta[]
-  Atleta          Atleta[]
+  Treino Treino[]
+  Jogo   Jogo[]
+  Atleta Atleta[]
 }
 
 model Provincia {
@@ -139,13 +138,15 @@ model Jogo {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  descricao  String
   data       DateTime
   local      String
   adversario String
   tipo       String // Amigável, Campeonato, Torneio
 
-  equipa   Equipa @relation(fields: [equipaId], references: [id])
-  equipaId Int
+  equipa          Equipa            @relation(fields: [equipaId], references: [id])
+  equipaId        Int
+  HistoricoAtleta HistoricoAtleta[]
 }
 
 model HistoricoAtleta {
@@ -153,18 +154,14 @@ model HistoricoAtleta {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  data       DateTime
-  tipo       String // Treino ou Jogo
-  observacao String?
-
   minutos       Int?
   gols          Int?
   assistencias  Int?
   faltas        Int?
   avaliacaoStar Int?
 
-  equipa   Equipa @relation(fields: [equipaId], references: [id])
-  equipaId Int
+  jogo   Jogo @relation(fields: [jogoId], references: [id])
+  jogoId Int
 
   atleta   Atleta @relation(fields: [atletaId], references: [id])
   atletaId Int
