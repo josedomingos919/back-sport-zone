@@ -37,8 +37,12 @@ model Atleta {
   publico    Boolean  @default(false)
   foto       String?
 
-  user            User              @relation(fields: [userId], references: [id])
-  userId          Int
+  equipe   Equipa @relation(fields: [equipaId], references: [id])
+  equipaId Int
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
   HistoricoAtleta HistoricoAtleta[]
   Destaque        Destaque[]
   Videos          Videos[]
@@ -80,6 +84,7 @@ model Equipa {
   Treino          Treino[]
   Jogo            Jogo[]
   HistoricoAtleta HistoricoAtleta[]
+  Atleta          Atleta[]
 }
 
 model Provincia {
