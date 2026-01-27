@@ -6,6 +6,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ProvinceModule } from './modules/province/province.module';
 import { FinanceiroModule } from './modules/financeiro/financeiro.module';
 import { ClubeModule } from './modules/clube/clube.module';
+import { EquipaModule } from './modules/equipa/equipa.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ClubeModule } from './modules/clube/clube.module';
     UserModule,
     ProvinceModule,
     FinanceiroModule,
+    EquipaModule,
     ClubeModule,
   ],
 })
