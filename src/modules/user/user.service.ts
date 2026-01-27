@@ -80,6 +80,28 @@ export class UserService {
     }
   }
 
+  async getAllTreinadores() {
+    try {
+      const users = await this.prisma.user.findMany({
+        where: {
+          access: UserAccessType.TREINADOR,
+        },
+        orderBy: [
+          {
+            id: 'desc',
+          },
+        ],
+      });
+
+      return users;
+    } catch (error) {
+      throw new ForbiddenException({
+        error,
+        status: false,
+      });
+    }
+  }
+
   async search(keword: string) {
     try {
       const users = await this.prisma.user.findMany({

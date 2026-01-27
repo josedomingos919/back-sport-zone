@@ -17,6 +17,11 @@ export class UserController {
     return this.userService.getAllDirigentes();
   }
 
+  @Get('treinadores')
+  getAllTreinadores() {
+    return this.userService.getAllTreinadores();
+  }
+
   @Get('search/:keword')
   search(@Param('keword') keword: string) {
     return this.userService.search(keword);

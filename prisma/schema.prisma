@@ -59,6 +59,7 @@ model Clube {
 
   province    Provincia @relation(fields: [provinciaId], references: [id])
   provinciaId Int
+  Equipa      Equipa[]
 }
 
 model Equipa {
@@ -70,8 +71,12 @@ model Equipa {
   escalao   String
   nome      String
 
-  treinador       User              @relation(fields: [userId], references: [id])
-  userId          Int
+  treinador   User @relation(fields: [treinadorId], references: [id])
+  treinadorId Int
+
+  clube   Clube @relation(fields: [clubeId], references: [id])
+  clubeId Int
+
   Treino          Treino[]
   Jogo            Jogo[]
   HistoricoAtleta HistoricoAtleta[]
