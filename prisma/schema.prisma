@@ -70,10 +70,11 @@ model Equipa {
   escalao   String
   nome      String
 
-  treinador User     @relation(fields: [userId], references: [id])
-  userId    Int
-  Treino    Treino[]
-  Jogo      Jogo[]
+  treinador       User              @relation(fields: [userId], references: [id])
+  userId          Int
+  Treino          Treino[]
+  Jogo            Jogo[]
+  HistoricoAtleta HistoricoAtleta[]
 }
 
 model Provincia {
@@ -152,6 +153,9 @@ model HistoricoAtleta {
   assistencias  Int?
   faltas        Int?
   avaliacaoStar Int?
+
+  equipa   Equipa @relation(fields: [equipaId], references: [id])
+  equipaId Int
 
   atleta   Atleta @relation(fields: [atletaId], references: [id])
   atletaId Int
