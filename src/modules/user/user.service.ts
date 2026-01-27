@@ -102,6 +102,28 @@ export class UserService {
     }
   }
 
+  async getAllAtleta() {
+    try {
+      const users = await this.prisma.user.findMany({
+        where: {
+          access: UserAccessType.ATLETA,
+        },
+        orderBy: [
+          {
+            id: 'desc',
+          },
+        ],
+      });
+
+      return users;
+    } catch (error) {
+      throw new ForbiddenException({
+        error,
+        status: false,
+      });
+    }
+  }
+
   async search(keword: string) {
     try {
       const users = await this.prisma.user.findMany({

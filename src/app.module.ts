@@ -7,6 +7,7 @@ import { ProvinceModule } from './modules/province/province.module';
 import { FinanceiroModule } from './modules/financeiro/financeiro.module';
 import { ClubeModule } from './modules/clube/clube.module';
 import { EquipaModule } from './modules/equipa/equipa.module';
+import { AtletaModule } from './modules/atleta/atleta.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { EquipaModule } from './modules/equipa/equipa.module';
     FinanceiroModule,
     EquipaModule,
     ClubeModule,
+    AtletaModule,
   ],
 })
 export class AppModule {}
