@@ -107,6 +107,9 @@ export class UserService {
       const users = await this.prisma.user.findMany({
         where: {
           access: UserAccessType.ATLETA,
+          Atleta: {
+            none: {},
+          },
         },
         orderBy: [
           {
