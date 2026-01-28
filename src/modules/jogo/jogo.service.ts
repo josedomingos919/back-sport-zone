@@ -12,7 +12,6 @@ export class JogoService {
     const response = await this.prisma.jogo.create({
       data: dto,
     });
-
     return response;
   }
 
@@ -69,7 +68,6 @@ export class JogoService {
         id,
       },
     });
-
     return response;
   }
 

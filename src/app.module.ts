@@ -9,6 +9,7 @@ import { AtletaModule } from './modules/atleta/atleta.module';
 import { TreinoModule } from './modules/treino/treino.module';
 import { ProvinceModule } from './modules/province/province.module';
 import { FinanceiroModule } from './modules/financeiro/financeiro.module';
+import { JogoModule } from './modules/jogo/jogo.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { FinanceiroModule } from './modules/financeiro/financeiro.module';
     ClubeModule,
     AtletaModule,
     TreinoModule,
+    JogoModule,
   ],
 })
 export class AppModule {}

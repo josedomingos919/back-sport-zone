@@ -17,7 +17,7 @@ export class CreateJogoDto {
   @Transform(({ value }) => parseInt(value))
   @IsNumber()
   @IsNotEmpty()
-  adversarioId: string;
+  adversarioId: number;
 
   @IsString()
   @IsNotEmpty()

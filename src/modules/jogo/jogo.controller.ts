@@ -13,7 +13,7 @@ import { JogoService } from './jogo.service';
 import { CreateJogoDto } from './dto/createJogo.dto';
 import { GetAllJogoDto } from './dto/getAllJogo.dto';
 
-@Controller('treino')
+@Controller('jogo')
 export class JogoController {
   constructor(private readonly treinoService: JogoService) {}
 
