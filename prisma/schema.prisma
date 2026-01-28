@@ -149,7 +149,7 @@ model Jogo {
   adversario   Equipa @relation("JogoAdversario", fields: [adversarioId], references: [id])
   adversarioId Int
 
-  tipo String // Amigável, Campeonato, Torneio
+  tipo String
 
   // Relação com a equipa "propria"
   equipa   Equipa @relation("JogoEquipa", fields: [equipaId], references: [id])
