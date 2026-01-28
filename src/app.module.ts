@@ -10,6 +10,7 @@ import { TreinoModule } from './modules/treino/treino.module';
 import { ProvinceModule } from './modules/province/province.module';
 import { FinanceiroModule } from './modules/financeiro/financeiro.module';
 import { JogoModule } from './modules/jogo/jogo.module';
+import { HistoricoModule } from './modules/historico/historico.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { JogoModule } from './modules/jogo/jogo.module';
     AtletaModule,
     TreinoModule,
     JogoModule,
+    HistoricoModule,
   ],
 })
 export class AppModule {}
