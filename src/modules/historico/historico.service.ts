@@ -26,7 +26,19 @@ export class HistoricoService {
     const { skip, take, totalPage } = getPagination({ page, size, total });
 
     const historicos = await this.prisma.historicoAtleta.findMany({
-      include: { atleta: true, jogo: true },
+      include: {
+        atleta: {
+          include: {
+            user: true,
+          },
+        },
+        jogo: {
+          include: {
+            adversario: true,
+            equipa: true,
+          },
+        },
+      },
       skip,
       take,
       where,
