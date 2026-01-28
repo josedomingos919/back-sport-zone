@@ -26,7 +26,7 @@ export class JogoService {
     const { skip, take, totalPage } = getPagination({ page, size, total });
 
     const jogos = await this.prisma.jogo.findMany({
-      include: { equipa: true },
+      include: { equipa: true, adversario: true },
       skip,
       take,
       where,
